@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-import { Navbar, EditableText, NumericInput } from "@blueprintjs/core";
+import { Button, Navbar, EditableText, NumericInput } from "@blueprintjs/core";
 import { DateInput } from "@blueprintjs/datetime";
 import './../node_modules/normalize.css/normalize.css';
 import './../node_modules/@blueprintjs/core/dist/blueprint.css';
@@ -85,6 +85,13 @@ class NavBar extends React.Component {
 }
 
 class PlayerRow extends React.Component {
+    renderDeleteButton(deletePlayerFunc, num) {
+        if (deletePlayerFunc) {
+            return <Button type="button" className="pt-button pt-icon-delete pt-intent-danger" onClick={()=>deletePlayerFunc(num)}/>
+        } else {
+            return "";
+        }
+    }
     render() {
         return (
             <tr>
@@ -93,6 +100,7 @@ class PlayerRow extends React.Component {
                 <td><EditableText selectAllOnFocus="true" defaultValue={this.props.club} placeholder="Клуб" onConfirm={s=>this.props.updatePlayer(this.props.num, "club", s)}/></td>
                 <td><DateInput format="DD.MM.YYYY" value={this.props.birth} onChange={d=>this.props.updatePlayer(this.props.num, "birth", d)}/></td>
                 <td><NumericInput min="-10" max="10000" selectAllOnFocus="true" selectAllOnIncrement="true" format="DD.MM.YYYY" value={this.props.ranking} onValueChange={v=>this.props.updatePlayer(this.props.num, "ranking", v)}/></td>
+                <td>{this.renderDeleteButton(this.props.deletePlayer, this.props.num)}</td>
             </tr>
         );
     }
@@ -114,6 +122,7 @@ class PlayerTable extends React.Component {
                         <th>Клуб</th>
                         <th>Датум рођења</th>
                         <th>Ранг</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -135,11 +144,19 @@ class PlayerTable extends React.Component {
         this.setState({players: p});
     };
 
+    deletePlayer = (num) => {
+        let p = this.state.players.slice();
+        if (num >= 1 && num <= p.length) {
+            p.splice(num - 1, 1);
+        }
+        this.setState({players: p});
+    };
+
     renderPlayers() {
         let rows = [];
         let num = 0;
         for (let player of this.state.players) {
-            let p = <PlayerRow num={++num} name={player.name} club={player.club} birth={player.birth} ranking={player.ranking}  updatePlayer={this.updatePlayer}/>
+            let p = <PlayerRow num={++num} name={player.name} club={player.club} birth={player.birth} ranking={player.ranking} updatePlayer={this.updatePlayer} deletePlayer={this.deletePlayer} />
             rows.push(p);
         }
 
