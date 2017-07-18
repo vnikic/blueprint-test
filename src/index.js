@@ -2,9 +2,38 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-import { Navbar, EditableText } from "@blueprintjs/core";
+import { Navbar, EditableText, NumericInput } from "@blueprintjs/core";
+import { DateInput } from "@blueprintjs/datetime";
 import './../node_modules/normalize.css/normalize.css';
 import './../node_modules/@blueprintjs/core/dist/blueprint.css';
+import './../node_modules/@blueprintjs/datetime/dist/blueprint-datetime.css';
+
+
+
+class Tournament {
+    constructor() {
+        this.players = [];
+    }
+
+    sayName() {
+    }
+
+    sayHistory() {
+    }
+}
+
+
+let tournamentInfo = new Tournament();
+
+// let appStore = {
+//     players: [
+//         {name:"Милован Дрецун", club: "SLI", birth: null, ranking: 1},
+//         {name:"Божа звани Пуб", club: "TIP", birth: null, ranking: 3},
+//         {name:"Милић од Мачве", club: "PUM", birth: null, ranking: 1},
+//         {name:"Дане Корица", club: "REK", birth: null, ranking: 2},
+//         {name:"Ник Ћулибрк", club: "ADV", birth: null, ranking: 4},
+//     ]
+// };
 
 
 class App extends React.Component {
@@ -14,8 +43,21 @@ class App extends React.Component {
                 <div>
                     <NavBar/>
                 </div>
+                <br/>
                 <div>
-                    <h2>Списак играча</h2>
+                    <ul className="pt-breadcrumbs">
+                        <li><button type="button" className="pt-button">Tournament Info</button></li>
+                        <li><button type="button" className="pt-button pt-intent-primary">Define Players</button></li>
+                        <li><button type="button" className="pt-button">Groups Draw</button></li>
+                        <li><button type="button" className="pt-button">Groups Results</button></li>
+                        <li><button type="button" className="pt-button pt-disabled">Gold Draw</button></li>
+                        <li><button type="button" className="pt-button pt-disabled">Silver Draw</button></li>
+                    </ul>
+                </div>
+                <br/>
+                <br/>
+                <div>
+                    {/*<h2>Списак играча</h2>*/}
                     <PlayerTable/>
                 </div>
             </div>
@@ -27,15 +69,12 @@ class App extends React.Component {
 class NavBar extends React.Component {
     render() {
         return (
-            <nav className="pt-navbar .pt-dark">
+            <nav className="pt-navbar pt-dark">
                 <div className="pt-navbar-group pt-align-left">
-                    <div className="pt-navbar-heading">Тениски турнири</div>
-                    <input className="pt-input" placeholder="Search files..." type="text" />
-                </div>
-                <div className="pt-navbar-group pt-align-right">
                     <button className="pt-button pt-minimal pt-icon-home">Home</button>
                     <button className="pt-button pt-minimal pt-icon-document">Files</button>
-                    <span className="pt-navbar-divider"></span>
+                </div>
+                <div className="pt-navbar-group pt-align-right">
                     <button className="pt-button pt-minimal pt-icon-user"></button>
                     <button className="pt-button pt-minimal pt-icon-notifications"></button>
                     <button className="pt-button pt-minimal pt-icon-cog"></button>
@@ -50,10 +89,10 @@ class PlayerRow extends React.Component {
         return (
             <tr>
                 <td>{this.props.num}</td>
-                <td><EditableText defaultValue={this.props.name} placeholder="Унеси име" onConfirm={s=>this.props.updatePlayer(this.props.num, "name", s)}/></td>
-                <td>{this.props.club}</td>
-                <td>{this.props.birth}</td>
-                <td>{this.props.ranking}</td>
+                <td><EditableText selectAllOnFocus="true" defaultValue={this.props.name} placeholder="Унеси име" onConfirm={s=>this.props.updatePlayer(this.props.num, "name", s)}/></td>
+                <td><EditableText selectAllOnFocus="true" defaultValue={this.props.club} placeholder="Клуб" onConfirm={s=>this.props.updatePlayer(this.props.num, "club", s)}/></td>
+                <td><DateInput format="DD.MM.YYYY" value={this.props.birth} onChange={d=>this.props.updatePlayer(this.props.num, "birth", d)}/></td>
+                <td><NumericInput min="-10" max="10000" selectAllOnFocus="true" selectAllOnIncrement="true" format="DD.MM.YYYY" value={this.props.ranking} onValueChange={v=>this.props.updatePlayer(this.props.num, "ranking", v)}/></td>
             </tr>
         );
     }
@@ -62,15 +101,7 @@ class PlayerRow extends React.Component {
 class PlayerTable extends React.Component {
     constructor() {
         super();
-        this.state = {
-            players: [
-                {name:"Милован Дрецун", club: "SLI", birth: "9.7.2007", ranking: 1},
-                {name:"Божа звани Пуб", club: "TIP", birth: "11.1.2007", ranking: 3},
-                {name:"Милић од Мачве", club: "PUM", birth: "23.6.2007", ranking: 1},
-                {name:"Дане Корица", club: "REK", birth: "16.10.2007", ranking: 2},
-                {name:"Ник Ћулибрк", club: "ADV", birth: "25.4.2007", ranking: 4},
-            ]
-        };
+        this.state = tournamentInfo;
     }
 
     render() {
