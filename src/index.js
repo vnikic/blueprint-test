@@ -89,7 +89,7 @@ class PlayerRow extends React.Component {
                 <td>{this.props.num}</td>
                 <td>
                     {/*<EditableText selectAllOnFocus="true" value={this.props.name} placeholder="Унеси име" onConfirm={this.updateName} onChange={this.updateName} onpaste={()=>alert("PASTE!")}/>*/}
-                    <input className="pt-input" type="text" placeholder="Prezime i ime igrača" dir="auto" value={this.props.name} onChange={() => this.updateName(this.value)} onPaste={(e)=>this.updateName(e.clipboardData.getData("text/plain"))}/>
+                    <input className="pt-input" type="text" placeholder="Prezime i ime igrača" dir="auto" value={this.props.name} onChange={() => this.updateName(this.value)} onPaste={(e)=>{this.updateName(e.clipboardData.getData("text/plain")); return false;}}/>
                 </td>
                 <td>
                     {/*<EditableText selectAllOnFocus="true" value={this.props.club} placeholder="Клуб" onConfirm={this.updateClub} onChange={this.updateClub}/>*/}
