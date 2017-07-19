@@ -8,32 +8,15 @@ import './../node_modules/normalize.css/normalize.css';
 import './../node_modules/@blueprintjs/core/dist/blueprint.css';
 import './../node_modules/@blueprintjs/datetime/dist/blueprint-datetime.css';
 
+import * as AppData from './appdata.js';
 
 
-class Tournament {
-    constructor() {
-        this.players = [];
-    }
+let tournamentInfo = new AppData.Tournament();
 
-    sayName() {
-    }
-
-    sayHistory() {
-    }
-}
-
-
-let tournamentInfo = new Tournament();
-
-// let appStore = {
-//     players: [
-//         {name:"Милован Дрецун", club: "SLI", birth: null, ranking: 1},
-//         {name:"Божа звани Пуб", club: "TIP", birth: null, ranking: 3},
-//         {name:"Милић од Мачве", club: "PUM", birth: null, ranking: 1},
-//         {name:"Дане Корица", club: "REK", birth: null, ranking: 2},
-//         {name:"Ник Ћулибрк", club: "ADV", birth: null, ranking: 4},
-//     ]
-// };
+// test data
+tournamentInfo.addPlayer(new AppData.Player("Momcilo Bajagic", "ECE", null, 1));
+tournamentInfo.addPlayer(new AppData.Player("Somilo", "ICE", null, 2));
+tournamentInfo.addPlayer(new AppData.Player("Oblak u pantalonama", "REK", null, 2));
 
 
 class App extends React.Component {
@@ -85,6 +68,13 @@ class NavBar extends React.Component {
 }
 
 class PlayerRow extends React.Component {
+    constructor(props) {
+        super(props);
+        this.update = this.update.bind(this);
+        this.updateName = this.updateName.bind(this);
+        this.updateClub = this.updateClub.bind(this);
+    }
+
     renderDeleteButton(deletePlayerFunc, num) {
         if (deletePlayerFunc) {
             return <Button type="button" className="pt-button pt-icon-delete pt-intent-danger" onClick={()=>deletePlayerFunc(num)}/>
@@ -92,24 +82,46 @@ class PlayerRow extends React.Component {
             return "";
         }
     }
+
     render() {
         return (
             <tr>
                 <td>{this.props.num}</td>
-                <td><EditableText selectAllOnFocus="true" defaultValue={this.props.name} placeholder="Унеси име" onConfirm={s=>this.props.updatePlayer(this.props.num, "name", s)}/></td>
-                <td><EditableText selectAllOnFocus="true" defaultValue={this.props.club} placeholder="Клуб" onConfirm={s=>this.props.updatePlayer(this.props.num, "club", s)}/></td>
+                <td>
+                    {/*<EditableText selectAllOnFocus="true" value={this.props.name} placeholder="Унеси име" onConfirm={this.updateName} onChange={this.updateName} onpaste={()=>alert("PASTE!")}/>*/}
+                    <input className="pt-input" type="text" placeholder="Prezime i ime igrača" dir="auto" value={this.props.name} onChange={() => this.updateName(this.value)} onPaste={(e)=>this.updateName(e.clipboardData.getData("text/plain"))}/>
+                </td>
+                <td>
+                    {/*<EditableText selectAllOnFocus="true" value={this.props.club} placeholder="Клуб" onConfirm={this.updateClub} onChange={this.updateClub}/>*/}
+                    <input className="pt-input" type="text" placeholder="Klub" dir="auto" value={this.props.club} onChange={() => this.updateClub(this.value)} onPaste={()=>alert("PASTE!")}/>
+                </td>
                 <td><DateInput format="DD.MM.YYYY" value={this.props.birth} onChange={d=>this.props.updatePlayer(this.props.num, "birth", d)}/></td>
                 <td><NumericInput min="-10" max="10000" selectAllOnFocus="true" selectAllOnIncrement="true" format="DD.MM.YYYY" value={this.props.ranking} onValueChange={v=>this.props.updatePlayer(this.props.num, "ranking", v)}/></td>
                 <td>{this.renderDeleteButton(this.props.deletePlayer, this.props.num)}</td>
             </tr>
         );
     }
+
+    update(value, field) {
+        this.props.updatePlayer(this.props.num, field, value);
+    }
+
+    updateName(value) {
+        this.update(value, "name");
+    }
+
+    updateClub(value) {
+        this.update(value, "club");
+    }
 }
+
 
 class PlayerTable extends React.Component {
     constructor() {
         super();
-        this.state = tournamentInfo;
+        this.state = {
+            players: tournamentInfo.players
+        };
     }
 
     render() {
@@ -133,23 +145,41 @@ class PlayerTable extends React.Component {
     }
 
     updatePlayer = (num, field, value) => {
-        let p = this.state.players.slice();
+        // first check if this is multiple players copy/paste
+        if (value && value.length > 20) {
+            let playerTokens = value.split("\n");
+            for (let i = 0, len = playerTokens.length; i < len; i++) {
+                if (playerTokens[i]) {
+                    let fields = playerTokens[i].split("\t");
+                    // todo: should try to recognize fields by values
+                    if (fields.length > 0) {
+                        let player = new AppData.Player(fields[0], fields[1]);
+                        player.update(field, value);
+                        tournamentInfo.addPlayer(player);
+                    }
+                }
+            }
+            return;
+        }
+
+
+        let p = tournamentInfo.players;
         if (num <= p.length) {
-            p[num - 1][field] = value;
+            let player = p[num - 1];
+            player.update(field, value);
         } else if (value && value !== "") {
-            let pr = {};
-            pr[field] = value;
-            p.push(pr);
+            let player = new AppData.Player();
+            player.update(field, value);
+            tournamentInfo.addPlayer(player);
         }
         this.setState({players: p});
     };
 
     deletePlayer = (num) => {
-        let p = this.state.players.slice();
-        if (num >= 1 && num <= p.length) {
-            p.splice(num - 1, 1);
+        if (num >= 1 && num <= tournamentInfo.players.length) {
+            tournamentInfo.removePlayer(num - 1);
+            this.setState({players: tournamentInfo.players});
         }
-        this.setState({players: p});
     };
 
     renderPlayers() {
