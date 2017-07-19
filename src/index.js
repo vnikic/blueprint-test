@@ -144,9 +144,13 @@ class PlayerTable extends React.Component {
         );
     }
 
+    isMultiline(value) {
+        return value &&  value.split("\n").length > 1;
+    }
+
     updatePlayer = (num, field, value) => {
         // first check if this is multiple players copy/paste
-        if (value && value.length > 20) {
+        if (this.isMultiline(value)) {
             let playerTokens = value.split("\n");
             for (let i = 0, len = playerTokens.length; i < len; i++) {
                 if (playerTokens[i]) {
@@ -154,25 +158,23 @@ class PlayerTable extends React.Component {
                     // todo: should try to recognize fields by values
                     if (fields.length > 0) {
                         let player = new AppData.Player(fields[0], fields[1]);
-                        player.update(field, value);
                         tournamentInfo.addPlayer(player);
                     }
                 }
             }
-            return;
+            this.setState({players: tournamentInfo.players});
+        } else {
+            let p = tournamentInfo.players;
+            if (num <= p.length) {
+                let player = p[num - 1];
+                player.update(field, value);
+            } else if (value && value !== "") {
+                let player = new AppData.Player();
+                player.update(field, value);
+                tournamentInfo.addPlayer(player);
+            }
+            this.setState({players: p});
         }
-
-
-        let p = tournamentInfo.players;
-        if (num <= p.length) {
-            let player = p[num - 1];
-            player.update(field, value);
-        } else if (value && value !== "") {
-            let player = new AppData.Player();
-            player.update(field, value);
-            tournamentInfo.addPlayer(player);
-        }
-        this.setState({players: p});
     };
 
     deletePlayer = (num) => {
