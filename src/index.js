@@ -20,12 +20,31 @@ tournamentInfo.addPlayer(new AppData.Player("Oblak u pantalonama", "REK", null, 
 
 
 class App extends React.Component {
+    render() {
+        return (
+            <div>
+                <div>
+                    <NavBar/>
+                </div>
+                <Tournament/>
+            </div>
+        );
+    }
+}
+
+class Tournament extends React.Component {
     renderStages() {
         let stagesArr = [];
         for (let i = 0; i < tournamentInfo.stages.length; i++) {
             let stage = tournamentInfo.stages[i];
+            let cls = "pt-button";
+            if (tournamentInfo.activeStage === stage) {
+                cls += " pt-intent-primary";
+            } else {
+                cls += " pt-disabled";
+            }
             stagesArr.push(
-                <li><button type="button" className="pt-button" onClick={() => alert("Should show tournament info!")}>{stage.name}</button></li>
+                <li><button type="button" className={cls} onClick={() => alert("Should show tournament info!")}>{stage.name}</button></li>
             );
         }
         return (<div>
@@ -37,22 +56,8 @@ class App extends React.Component {
 
     render() {
         return (
-            <div>
-                <div>
-                    <NavBar/>
-                </div>
-                <br/>
+            <div className="tournament">
                 {this.renderStages()}
-                <div>
-                    <ul className="pt-breadcrumbs">
-                        <li><button type="button" className="pt-button" onClick={() => alert("Should show tournament info!")}>Tournament Info</button></li>
-                        <li><button type="button" className="pt-button pt-intent-primary">Define Players</button></li>
-                        <li><button type="button" className="pt-button">Groups Draw</button></li>
-                        <li><button type="button" className="pt-button">Groups Results</button></li>
-                        <li><button type="button" className="pt-button pt-disabled">Gold Draw</button></li>
-                        <li><button type="button" className="pt-button pt-disabled">Silver Draw</button></li>
-                    </ul>
-                </div>
                 <br/>
                 <br/>
                 <div>
@@ -71,7 +76,7 @@ class NavBar extends React.Component {
             <nav className="pt-navbar pt-dark">
                 <div className="pt-navbar-group pt-align-left">
                     <button className="pt-button pt-minimal pt-icon-home">Home</button>
-                    <button className="pt-button pt-minimal pt-icon-document">Files</button>
+                    <h4>Turnir: Palić 2017, dečaci, 10, zeleni</h4>
                 </div>
                 <div className="pt-navbar-group pt-align-right">
                     <button className="pt-button pt-minimal pt-icon-user"></button>
@@ -145,11 +150,11 @@ class PlayerTable extends React.Component {
             <table className="pt-table pt-condensed pt-bordered pt-interactive">
                 <thead>
                     <tr>
-                        <th>Бр.</th>
-                        <th>Име</th>
-                        <th>Клуб</th>
-                        <th>Датум рођења</th>
-                        <th>Ранг</th>
+                        <th>Num</th>
+                        <th>Prezime i ime</th>
+                        <th>Klub</th>
+                        <th>Datum rođenja</th>
+                        <th>Rang</th>
                         <th></th>
                     </tr>
                 </thead>
