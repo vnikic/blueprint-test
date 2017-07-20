@@ -1,6 +1,32 @@
+export class TournamentStage {
+    static INFO = new TournamentStage("Turnir");
+    static PLAYERS = new TournamentStage("Igrači");
+    static GROUPS_DRAW = new TournamentStage("Žreb grupa");
+    static GROUPS_RESULTS = new TournamentStage("Rezultati grupa");
+    static GOLD_DRAW = new TournamentStage("Glavni žreb");
+    static SILVER_DRAW = new TournamentStage("Utešni žreb");
+    static GOLD_RESULTS = new TournamentStage("Glavni - rezultat");
+    static SILVER_RESULTS = new TournamentStage("Utešni - rezultati");
+
+    constructor(name) {
+        this.name = name;
+    }
+}
+
+
 export class Tournament {
     constructor() {
         this.players = [];
+        this.stages = [
+            TournamentStage.INFO,
+            TournamentStage.PLAYERS,
+            TournamentStage.GROUPS_DRAW,
+            TournamentStage.GROUPS_RESULTS,
+            TournamentStage.GOLD_DRAW,
+            TournamentStage.SILVER_DRAW,
+            TournamentStage.GOLD_RESULTS,
+            TournamentStage.SILVER_RESULTS,
+        ];
     }
 
     addPlayer(player) {

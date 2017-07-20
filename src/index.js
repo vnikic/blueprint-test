@@ -20,6 +20,21 @@ tournamentInfo.addPlayer(new AppData.Player("Oblak u pantalonama", "REK", null, 
 
 
 class App extends React.Component {
+    renderStages() {
+        let stagesArr = [];
+        for (let i = 0; i < tournamentInfo.stages.length; i++) {
+            let stage = tournamentInfo.stages[i];
+            stagesArr.push(
+                <li><button type="button" className="pt-button" onClick={() => alert("Should show tournament info!")}>{stage.name}</button></li>
+            );
+        }
+        return (<div>
+            <ul className="pt-breadcrumbs">
+                {stagesArr}
+            </ul>
+        </div>);
+    }
+
     render() {
         return (
             <div>
@@ -27,9 +42,10 @@ class App extends React.Component {
                     <NavBar/>
                 </div>
                 <br/>
+                {this.renderStages()}
                 <div>
                     <ul className="pt-breadcrumbs">
-                        <li><button type="button" className="pt-button">Tournament Info</button></li>
+                        <li><button type="button" className="pt-button" onClick={() => alert("Should show tournament info!")}>Tournament Info</button></li>
                         <li><button type="button" className="pt-button pt-intent-primary">Define Players</button></li>
                         <li><button type="button" className="pt-button">Groups Draw</button></li>
                         <li><button type="button" className="pt-button">Groups Results</button></li>
