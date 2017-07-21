@@ -44,7 +44,7 @@ class Tournament extends React.Component {
                 cls += " pt-disabled";
             }
             stagesArr.push(
-                <li><button type="button" className={cls} onClick={() => alert("Should show tournament info!")}>{stage.name}</button></li>
+                <li><button type="button" className={cls} onClick={() => alert("Should show tournament info!")}>{stage.stageInfo.name}</button></li>
             );
         }
         return (<div>
@@ -166,7 +166,7 @@ class PlayerTable extends React.Component {
     }
 
     isMultiline(value) {
-        return value &&  value.split("\n").length > 1;
+        return value && "string" === typeof value && value.split("\n").length > 1;
     }
 
     updatePlayer = (num, field, value) => {
